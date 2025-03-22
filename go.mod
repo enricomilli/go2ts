@@ -1,4 +1,4 @@
-module github.com/tkrajina/typescriptify-golang-structs
+module github.com/enricomilli/go2ts
 
 go 1.16
 
