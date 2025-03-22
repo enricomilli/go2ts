@@ -154,10 +154,10 @@ func deepFields(typeOf reflect.Type) []reflect.StructField {
 
 		kind := f.Type.Kind()
 		if f.Anonymous && kind == reflect.Struct {
-			//fmt.Println(v.Interface())
+			// fmt.Println(v.Interface())
 			fields = append(fields, deepFields(f.Type)...)
 		} else if f.Anonymous && kind == reflect.Ptr && f.Type.Elem().Kind() == reflect.Struct {
-			//fmt.Println(v.Interface())
+			// fmt.Println(v.Interface())
 			fields = append(fields, deepFields(f.Type.Elem())...)
 		} else {
 			fields = append(fields, f)
@@ -477,10 +477,8 @@ func (t TypeScriptify) ConvertToFile(fileName string) error {
 	if _, err := f.WriteString("/* Do not change, this code is generated from Golang structs */\n\n"); err != nil {
 		return err
 	}
+
 	if _, err := f.WriteString(converted); err != nil {
-		return err
-	}
-	if err != nil {
 		return err
 	}
 
@@ -581,6 +579,10 @@ func (t *TypeScriptify) getJSONFieldName(field reflect.StructField, isPtr bool) 
 		}
 		if !ignored && isPtr || hasOmitEmpty {
 			jsonFieldName = fmt.Sprintf("%s?", jsonFieldName)
+		}
+
+		if strings.Contains(jsonFieldName, " ") {
+			jsonFieldName = "\"" + jsonFieldName + "\""
 		}
 	} else if /*field.IsExported()*/ field.PkgPath == "" {
 		jsonFieldName = field.Name
@@ -687,7 +689,7 @@ func (t *TypeScriptify) convertType(depth int, typeOf reflect.Type, customCode m
 
 			builder.AddMapField(jsonFieldName, field)
 		} else if field.Type.Kind() == reflect.Slice || field.Type.Kind() == reflect.Array { // Slice:
-			if field.Type.Elem().Kind() == reflect.Ptr { //extract ptr type
+			if field.Type.Elem().Kind() == reflect.Ptr { // extract ptr type
 				field.Type = field.Type.Elem()
 			}
 
