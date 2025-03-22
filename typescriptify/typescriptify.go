@@ -581,9 +581,10 @@ func (t *TypeScriptify) getJSONFieldName(field reflect.StructField, isPtr bool) 
 			jsonFieldName = fmt.Sprintf("%s?", jsonFieldName)
 		}
 
-		if strings.Contains(jsonFieldName, " ") {
+		if strings.Contains(jsonFieldName, " ") || strings.Contains(jsonFieldName, "/") {
 			jsonFieldName = "\"" + jsonFieldName + "\""
 		}
+
 	} else if /*field.IsExported()*/ field.PkgPath == "" {
 		jsonFieldName = field.Name
 	}
